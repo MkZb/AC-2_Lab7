@@ -74,9 +74,6 @@ static int __init hello_init(void)
 		if (i == 5)
 			tail = 0;
 
-		if (ZERO_OR_NULL_PTR(tail))
-			goto mem_err;
-
 		tail->time = ktime_get();
 		printk(KERN_INFO "Hello, world!\n");
 
@@ -84,19 +81,6 @@ static int __init hello_init(void)
 	}
 
 	return 0;
-
-mem_err:
-	{
-		struct time_list *md, *tmp;
-
-		printk(KERN_ERR "Runned out of memory");
-		list_for_each_entry_safe(md, tmp, &head, next) {
-			list_del(&md->next);
-			kfree(md);
-		}
-		BUG();
-		return -ENOMEM;
-	}
 }
 
 static void __exit hello_exit(void)
